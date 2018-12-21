@@ -1,0 +1,13 @@
+Package: OrdStat
+Type: Package
+Title: Calculate the joint distribution of order statistics
+Version: 1.0
+Date: 2018-12-21
+Author: Jonathan von Schroeder
+Maintainer: Jonathan von Schroeder <jvs@uni-bremen.de>
+Description: Calculate the joint distribution of order statistics for the one- or two-group case.
+License: GPL (>= 2)
+Imports: Rcpp (>= 0.12.17), RcppParallel (>= 4.4.1)
+LinkingTo: Rcpp, RcppParallel
+SystemRequirements: GNU make
+RoxygenNote: 6.0.1
