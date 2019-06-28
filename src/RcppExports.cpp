@@ -6,8 +6,8 @@
 using namespace Rcpp;
 
 // noe_faithful
-Rcpp::NumericMatrix noe_faithful(Rcpp::NumericVector v1, Rcpp::NumericVector v2, int n1, int n2, bool parallel);
-RcppExport SEXP _OrdStat_noe_faithful(SEXP v1SEXP, SEXP v2SEXP, SEXP n1SEXP, SEXP n2SEXP, SEXP parallelSEXP) {
+Rcpp::NumericMatrix noe_faithful(Rcpp::NumericVector v1, Rcpp::NumericVector v2, int n1, int n2, bool parallel, bool progress);
+RcppExport SEXP _OrdStat_noe_faithful(SEXP v1SEXP, SEXP v2SEXP, SEXP n1SEXP, SEXP n2SEXP, SEXP parallelSEXP, SEXP progressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -16,13 +16,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type n1(n1SEXP);
     Rcpp::traits::input_parameter< int >::type n2(n2SEXP);
     Rcpp::traits::input_parameter< bool >::type parallel(parallelSEXP);
-    rcpp_result_gen = Rcpp::wrap(noe_faithful(v1, v2, n1, n2, parallel));
+    Rcpp::traits::input_parameter< bool >::type progress(progressSEXP);
+    rcpp_result_gen = Rcpp::wrap(noe_faithful(v1, v2, n1, n2, parallel, progress));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_OrdStat_noe_faithful", (DL_FUNC) &_OrdStat_noe_faithful, 5},
+    {"_OrdStat_noe_faithful", (DL_FUNC) &_OrdStat_noe_faithful, 6},
     {NULL, NULL, 0}
 };
 

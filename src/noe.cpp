@@ -1,8 +1,12 @@
 #include<cmath> //for std::min/std::max
 #include<Rcpp.h>
 // [[Rcpp::depends(RcppParallel)]]
+#include<RcppThread.h>
+// [[Rcpp::depends(RcppThread)]]
 #include<RcppParallel.h>
 // [[Rcpp::plugins(cpp11)]]
+
+#include "ProgressBar.h"
 
 #define NO_K
 #include "PairArithmetic.hpp"
@@ -55,13 +59,18 @@ Rcpp::NumericMatrix toNumericMatrix(const std::vector< std::vector<T> >& m) {
 //' @param parallel Use parallelization to speed up the calculation?
 //' @export
 // [[Rcpp::export]]
-Rcpp::NumericMatrix noe_faithful(Rcpp::NumericVector v1,Rcpp::NumericVector v2,int n1=-1,int n2=-1,bool parallel = true) {
-  if(n1<0) n1 = v1.length();
-  if(n2<0) n2 = v2.length();
-  v1 = Rcpp::rev(Rcpp::NumericVector(Rcpp::cummin(Rcpp::rev(v1))));
-  v2 = Rcpp::rev(Rcpp::NumericVector(Rcpp::cummin(Rcpp::rev(v2))));
+Rcpp::NumericMatrix noe_faithful(Rcpp::NumericVector v1,Rcpp::NumericVector v2,int n1=-1,int n2=-1,bool parallel = true,bool progress = true) {
+	if(n1<0) n1 = v1.length();
+	if(n2<0) n2 = v2.length();
+	v1 = Rcpp::rev(Rcpp::NumericVector(Rcpp::cummin(Rcpp::rev(v1))));
+	v2 = Rcpp::rev(Rcpp::NumericVector(Rcpp::cummin(Rcpp::rev(v2))));
 	const int n1_ = std::max(0,std::min((int)v1.length(),n1));
 	const int n2_ = std::max(0,std::min((int)v2.length(),n2));
-	if(parallel) return toNumericMatrix<PairArithmetic::DoublePair>(noe2_lower_p<PairArithmetic::DoublePair>(fromNumericVector<PairArithmetic::DoublePair>(v1).data(),fromNumericVector<PairArithmetic::DoublePair>(v2).data(),n1_,n2_,std::min(v1.length(),v2.length())));
-	else return toNumericMatrix<PairArithmetic::DoublePair>(noe2_lower<PairArithmetic::DoublePair>(fromNumericVector<PairArithmetic::DoublePair>(v1).data(),fromNumericVector<PairArithmetic::DoublePair>(v2).data(),n1_,n2_,std::min(v1.length(),v2.length())));
+	std::vector< std::vector<PairArithmetic::DoublePair> > res;
+	auto fn = [&] {
+	  if(parallel) res = noe2_lower_p<PairArithmetic::DoublePair>(fromNumericVector<PairArithmetic::DoublePair>(v1).data(),fromNumericVector<PairArithmetic::DoublePair>(v2).data(),n1_,n2_,std::min(v1.length(),v2.length()));
+	  else res = noe2_lower<PairArithmetic::DoublePair>(fromNumericVector<PairArithmetic::DoublePair>(v1).data(),fromNumericVector<PairArithmetic::DoublePair>(v2).data(),n1_,n2_,std::min(v1.length(),v2.length()));
+	};
+	fn();
+	return toNumericMatrix<PairArithmetic::DoublePair>(res);
 }
