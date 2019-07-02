@@ -5,26 +5,77 @@
 
 using namespace Rcpp;
 
-// noe_faithful
-Rcpp::NumericMatrix noe_faithful(Rcpp::NumericVector v1, Rcpp::NumericVector v2, int n1, int n2, bool parallel, bool progress, bool quick);
-RcppExport SEXP _OrdStat_noe_faithful(SEXP v1SEXP, SEXP v2SEXP, SEXP n1SEXP, SEXP n2SEXP, SEXP parallelSEXP, SEXP progressSEXP, SEXP quickSEXP) {
+// pordstat2
+Rcpp::NumericMatrix pordstat2(Rcpp::NumericVector b, Rcpp::Function Fn_alt, int n1, int n2, bool parallel, bool progress, bool quick);
+RcppExport SEXP _OrdStat_pordstat2(SEXP bSEXP, SEXP Fn_altSEXP, SEXP n1SEXP, SEXP n2SEXP, SEXP parallelSEXP, SEXP progressSEXP, SEXP quickSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type v1(v1SEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type v2(v2SEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type b(bSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Function >::type Fn_alt(Fn_altSEXP);
     Rcpp::traits::input_parameter< int >::type n1(n1SEXP);
     Rcpp::traits::input_parameter< int >::type n2(n2SEXP);
     Rcpp::traits::input_parameter< bool >::type parallel(parallelSEXP);
     Rcpp::traits::input_parameter< bool >::type progress(progressSEXP);
     Rcpp::traits::input_parameter< bool >::type quick(quickSEXP);
-    rcpp_result_gen = Rcpp::wrap(noe_faithful(v1, v2, n1, n2, parallel, progress, quick));
+    rcpp_result_gen = Rcpp::wrap(pordstat2(b, Fn_alt, n1, n2, parallel, progress, quick));
+    return rcpp_result_gen;
+END_RCPP
+}
+// dfd_fm
+Rcpp::DataFrame dfd_fm(Rcpp::NumericVector b, Rcpp::Function Fn_alt, const int m0, const int m, bool parallel, bool progress, bool quick);
+RcppExport SEXP _OrdStat_dfd_fm(SEXP bSEXP, SEXP Fn_altSEXP, SEXP m0SEXP, SEXP mSEXP, SEXP parallelSEXP, SEXP progressSEXP, SEXP quickSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type b(bSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Function >::type Fn_alt(Fn_altSEXP);
+    Rcpp::traits::input_parameter< const int >::type m0(m0SEXP);
+    Rcpp::traits::input_parameter< const int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< bool >::type parallel(parallelSEXP);
+    Rcpp::traits::input_parameter< bool >::type progress(progressSEXP);
+    Rcpp::traits::input_parameter< bool >::type quick(quickSEXP);
+    rcpp_result_gen = Rcpp::wrap(dfd_fm(b, Fn_alt, m0, m, parallel, progress, quick));
+    return rcpp_result_gen;
+END_RCPP
+}
+// avg_pwr
+double avg_pwr(Rcpp::NumericVector b, Rcpp::Function Fn_alt, const int m0, const int m, bool parallel, bool progress, bool quick);
+RcppExport SEXP _OrdStat_avg_pwr(SEXP bSEXP, SEXP Fn_altSEXP, SEXP m0SEXP, SEXP mSEXP, SEXP parallelSEXP, SEXP progressSEXP, SEXP quickSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type b(bSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Function >::type Fn_alt(Fn_altSEXP);
+    Rcpp::traits::input_parameter< const int >::type m0(m0SEXP);
+    Rcpp::traits::input_parameter< const int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< bool >::type parallel(parallelSEXP);
+    Rcpp::traits::input_parameter< bool >::type progress(progressSEXP);
+    Rcpp::traits::input_parameter< bool >::type quick(quickSEXP);
+    rcpp_result_gen = Rcpp::wrap(avg_pwr(b, Fn_alt, m0, m, parallel, progress, quick));
+    return rcpp_result_gen;
+END_RCPP
+}
+// lambda_pwr
+double lambda_pwr(Rcpp::NumericVector b, Rcpp::Function Fn_alt, const double pr, const int m, const double lambda, bool parallel, bool progress, bool quick);
+RcppExport SEXP _OrdStat_lambda_pwr(SEXP bSEXP, SEXP Fn_altSEXP, SEXP prSEXP, SEXP mSEXP, SEXP lambdaSEXP, SEXP parallelSEXP, SEXP progressSEXP, SEXP quickSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type b(bSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Function >::type Fn_alt(Fn_altSEXP);
+    Rcpp::traits::input_parameter< const double >::type pr(prSEXP);
+    Rcpp::traits::input_parameter< const int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< const double >::type lambda(lambdaSEXP);
+    Rcpp::traits::input_parameter< bool >::type parallel(parallelSEXP);
+    Rcpp::traits::input_parameter< bool >::type progress(progressSEXP);
+    Rcpp::traits::input_parameter< bool >::type quick(quickSEXP);
+    rcpp_result_gen = Rcpp::wrap(lambda_pwr(b, Fn_alt, pr, m, lambda, parallel, progress, quick));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_OrdStat_noe_faithful", (DL_FUNC) &_OrdStat_noe_faithful, 7},
+    {"_OrdStat_pordstat2", (DL_FUNC) &_OrdStat_pordstat2, 7},
+    {"_OrdStat_dfd_fm", (DL_FUNC) &_OrdStat_dfd_fm, 7},
+    {"_OrdStat_avg_pwr", (DL_FUNC) &_OrdStat_avg_pwr, 7},
+    {"_OrdStat_lambda_pwr", (DL_FUNC) &_OrdStat_lambda_pwr, 8},
     {NULL, NULL, 0}
 };
 

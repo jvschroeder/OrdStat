@@ -6,7 +6,7 @@
   Calculate the joint distribution of order statistics
 }
 \description{
-  Calculate the joint distribution of order statistics for the one- or two-group case.
+  Calculate the joint distribution of order statistics for the one- or two-group case and related quantities.
 }
 \details{
 }
@@ -19,10 +19,4 @@ Maintainer: Jonathan von Schroeder <jvs@uni-bremen.de>
 }
 \keyword{ package }
 \seealso{
-}
-\examples{
-  \dontrun{
-    t <- 0.05 * (1:50)/50
-    noe_faithful(t,pnorm(qnorm(t),mean=1))  
-  }
 }
