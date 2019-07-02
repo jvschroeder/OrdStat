@@ -20,6 +20,17 @@ template<typename T>
 std::vector< std::vector<T> > noe2_lower_p(const T* v1, const T* v2, const int n1, const int n2, const int max_idx)
 #include "noe2_lower.hpp"
 
+#undef ALGORITHM_PARALLEL
+#define PROGRESS
+template<typename T>
+std::vector< std::vector<T> > noe2_lower_progress(const T* v1, const T* v2, const int n1, const int n2, const int max_idx)
+#include "noe2_lower.hpp"
+  
+#define ALGORITHM_PARALLEL
+  template<typename T>
+  std::vector< std::vector<T> > noe2_lower_p_progress(const T* v1, const T* v2, const int n1, const int n2, const int max_idx)
+#include "noe2_lower.hpp"
+
 template<typename T>
 std::vector<T> fromNumericVector(const Rcpp::NumericVector& v) {
   return std::vector<T>(v.begin(),v.end());
@@ -37,6 +48,28 @@ Rcpp::NumericMatrix toNumericMatrix(const std::vector< std::vector<T> >& m) {
 		}
 	}
 	return ret;
+}
+
+template<typename T>
+std::vector< std::vector<T> > noe_faithful(const T* v1, const T* v2, int n1,int n2,bool parallel, bool progress, const int max_idx) {
+  std::vector< std::vector<T> > res(0);
+  auto fn = [&] {
+    if(parallel) {
+      if(!progress) res = noe2_lower_p<T>(v1,v2,n1,n2,max_idx);
+      else res = noe2_lower_p_progress<T>(v1,v2,n1,n2,max_idx);
+    } else{
+      if(!progress) res = noe2_lower<T>(v1,v2,n1,n2,max_idx);
+      else res = noe2_lower_progress<T>(v1,v2,n1,n2,max_idx);
+    }
+  };
+  try{
+    fn();
+  } catch(const RcppThread::UserInterruptException& ex) {
+    Rcpp::Rcout << std::endl;
+    throw ex;
+  }
+  Rcpp::Rcout << std::endl;
+  return res;
 }
 
 //' Joint distribution of order statistics for the one- or two-group case
@@ -59,18 +92,18 @@ Rcpp::NumericMatrix toNumericMatrix(const std::vector< std::vector<T> >& m) {
 //' @param parallel Use parallelization to speed up the calculation?
 //' @export
 // [[Rcpp::export]]
-Rcpp::NumericMatrix noe_faithful(Rcpp::NumericVector v1,Rcpp::NumericVector v2,int n1=-1,int n2=-1,bool parallel = true,bool progress = true) {
+Rcpp::NumericMatrix noe_faithful(Rcpp::NumericVector v1,Rcpp::NumericVector v2,int n1=-1,int n2=-1,bool parallel = true,bool progress = true, bool quick = false) {
 	if(n1<0) n1 = v1.length();
 	if(n2<0) n2 = v2.length();
 	v1 = Rcpp::rev(Rcpp::NumericVector(Rcpp::cummin(Rcpp::rev(v1))));
 	v2 = Rcpp::rev(Rcpp::NumericVector(Rcpp::cummin(Rcpp::rev(v2))));
 	const int n1_ = std::max(0,std::min((int)v1.length(),n1));
 	const int n2_ = std::max(0,std::min((int)v2.length(),n2));
-	std::vector< std::vector<PairArithmetic::DoublePair> > res;
-	auto fn = [&] {
-	  if(parallel) res = noe2_lower_p<PairArithmetic::DoublePair>(fromNumericVector<PairArithmetic::DoublePair>(v1).data(),fromNumericVector<PairArithmetic::DoublePair>(v2).data(),n1_,n2_,std::min(v1.length(),v2.length()));
-	  else res = noe2_lower<PairArithmetic::DoublePair>(fromNumericVector<PairArithmetic::DoublePair>(v1).data(),fromNumericVector<PairArithmetic::DoublePair>(v2).data(),n1_,n2_,std::min(v1.length(),v2.length()));
-	};
-	fn();
-	return toNumericMatrix<PairArithmetic::DoublePair>(res);
+	if(!quick) {
+	  std::vector< std::vector<PairArithmetic::DoublePair> > res = noe_faithful<PairArithmetic::DoublePair>(fromNumericVector<PairArithmetic::DoublePair>(v1).data(),fromNumericVector<PairArithmetic::DoublePair>(v2).data(),n1_,n2_,parallel,progress,std::min(v1.length(),v2.length()));
+	  return toNumericMatrix<PairArithmetic::DoublePair>(res);
+	} else {
+	  std::vector< std::vector<double> > res = noe_faithful<double>(fromNumericVector<double>(v1).data(),fromNumericVector<double>(v2).data(),n1_,n2_,parallel,progress,std::min(v1.length(),v2.length()));
+	  return toNumericMatrix<double>(res);
+	}
 }

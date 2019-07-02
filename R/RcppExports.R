@@ -20,7 +20,7 @@
 #' @param n2 The maximal size of the second group - Can be at most length(v2)
 #' @param parallel Use parallelization to speed up the calculation?
 #' @export
-noe_faithful <- function(v1, v2, n1 = -1L, n2 = -1L, parallel = TRUE, progress = TRUE) {
-    .Call(`_OrdStat_noe_faithful`, v1, v2, n1, n2, parallel, progress)
+noe_faithful <- function(v1, v2, n1 = -1L, n2 = -1L, parallel = TRUE, progress = TRUE, quick = FALSE) {
+    .Call(`_OrdStat_noe_faithful`, v1, v2, n1, n2, parallel, progress, quick)
 }
 
