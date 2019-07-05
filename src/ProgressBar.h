@@ -14,6 +14,7 @@ public:
     void show(uint64_t currentVal, bool forceShow=false) noexcept {
         if(RcppThread::mainThreadID == std::this_thread::get_id() && (forceShow || std::chrono::duration<float, std::milli>(std::chrono::high_resolution_clock::now()-last).count() > 100)) {
           last =  std::chrono::high_resolution_clock::now();
+          currentVal = std::min(currentVal,maxVal);
           int progress = (int)((float) currentVal / maxVal * length);
           Rcpp::Rcout << "\r|" << std::string(progress, '=') << std::string(length-progress,' ');
           {

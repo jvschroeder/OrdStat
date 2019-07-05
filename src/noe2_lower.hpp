@@ -17,6 +17,8 @@
 	#endif
 	std::vector< std::vector<T> > res(n1+1, std::vector<T>(n2+1,-1));
 	std::vector< std::vector<T> > Q(res), Q_new(res);
+	res[0][0] = 1;
+	if(n1==0 && n2==0) return res;
 	T val = 1;
 	for(int i1=0; i1<=n1; i1++) {
 		T val_ = val;
@@ -26,16 +28,30 @@
 		}
 		val *= v1[0];
 	}
-	res[0][0] = 1;
 	if(n1>0) res[1][0] = v1[0];
 	if(n2>0) res[0][1] = v2[0];
 	const int n = n1+n2;
 	#ifdef PROGRESS
-	const uint64_t n2_2 = n2*n2;
-	const uint64_t n2_3 = n2_2*n2;
-	const uint64_t n1_2 = n1*n1;
-	const uint64_t n1_3 = n1_2*n1;
-	const uint64_t tot = 0.5*n2+1.5*n2_2+n2_3+(1.5+1.5*n2+4.25*n2_2+1.25*n2_3)*n1+(1.5+4.25*n2+3*n2_2+0.25*n2_3)*n1_2+(1+1.25*n2+0.25*n2_2)*n1_3;
+	auto complexity = [](const int n1,const int n2) {
+	  const uint64_t n2_2 = n2*n2;
+	  const uint64_t n2_3 = n2_2*n2;
+	  const uint64_t n1_2 = n1*n1;
+	  const uint64_t n1_3 = n1_2*n1;
+	  return 0.5*n2+1.5*n2_2+n2_3+(1.5+1.5*n2+4.25*n2_2+1.25*n2_3)*n1+(1.5+4.25*n2+3*n2_2+0.25*n2_3)*n1_2+(1+1.25*n2+0.25*n2_2)*n1_3;
+	};
+	
+	uint64_t s = 0;
+	if(max_idx < n) {
+	  bool init = true;
+  	for(int i1=std::max(0,max_idx-n2-1); i1 <= n1; i1++) {
+  	  const int i2 = std::min(max_idx-i1,n2);
+  	  s += complexity(i1,i2) - (i1+1)*(i2+2);
+  	  if(!init) s -= complexity(i1-1,i2) - (i1)*(i2+2);
+  	  else init = false;
+  	}
+  	s += (n1+1)*(n2+2) - 2*(n-max_idx);
+	} else s = complexity(n1,n2);
+	const uint64_t tot = s;
 	ProgressBar bar(Rcpp::Rcout,tot);
 	uint64_t cnt = (n1+1)*(n2+2);
 	std::mutex cnt_mutex;
@@ -137,7 +153,7 @@
 		std::swap(Q,Q_new);
 	}
   #ifdef PROGRESS
-  	bar.show(cnt,true);
+  	bar.show(tot,true);
   #endif
 	return res;
 }
